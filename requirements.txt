@@ -1,4 +1,4 @@
 pyrogram
 tgcrypto
 pymongo
-yt-dlp==2024.05.27
+yt-dlp @ https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz
