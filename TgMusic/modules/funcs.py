@@ -10,6 +10,10 @@ from TgMusic.core.admins import is_admin
 from TgMusic.modules.utils.play_helpers import extract_argument
 
 
+# Ganti ini dengan ID Telegram kamu
+OWNER_ID = 5581256219
+
+
 @Client.on_message(filters=Filter.command(["playtype", "setPlayType"]))
 async def set_play_type(_: Client, msg: types.Message) -> None:
     """Configure playback mode."""
@@ -23,13 +27,17 @@ async def set_play_type(_: Client, msg: types.Message) -> None:
 
     play_type = extract_argument(msg.text, enforce_digit=True)
     if not play_type:
-        text = "Usage: /setPlayType 0/1\n\n0 = Directly play the first search result.\n1 = Show a list of songs to choose from."
+        text = (
+            "Usage: /setPlayType 0/1\n\n"
+            "0 = Directly play the first search result.\n"
+            "1 = Show a list of songs to choose from."
+        )
         await msg.reply_text(text)
         return
 
     play_type = int(play_type)
     if play_type not in (0, 1):
-        await msg.reply_text("⚠️ Invalid mode. Use 0  or 1")
+        await msg.reply_text("⚠️ Invalid mode. Use 0 or 1")
         return
 
     await db.set_play_type(chat_id, play_type)
@@ -39,14 +47,15 @@ async def set_play_type(_: Client, msg: types.Message) -> None:
 async def is_admin_or_reply(
     msg: types.Message,
 ) -> Union[int, types.Message, types.Error]:
-    """Verify admin status and active playback session."""
+    """Verify if user is allowed to control playback (admin or owner)."""
     chat_id = msg.chat_id
 
     if not chat_cache.is_active(chat_id):
         return await msg.reply_text("⏸ No active playback session")
 
-    if not await is_admin(chat_id, msg.from_id):
-        return await msg.reply_text("⛔ Administrator privileges required")
+    # Izinkan admin atau owner (kamu)
+    if msg.from_id != OWNER_ID and not await is_admin(chat_id, msg.from_id):
+        return await msg.reply_text("⛔ Only admins or bot owner can do this")
 
     return chat_id
 
