@@ -263,9 +263,9 @@ class YouTubeUtils:
         output_template = str(config.DOWNLOADS_DIR / "%(id)s.%(ext)s")
 
         format_selector = (
-            "bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4][height<=1080]"
+            "bestvideo[ext=mp4][height<=1080]+bestaudio/best"
             if video
-            else "bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio[ext=webm]/bestaudio/best"
+            else "bestaudio/best"
         )
 
         ytdlp_params = [
